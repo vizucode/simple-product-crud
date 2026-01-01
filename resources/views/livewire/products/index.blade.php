@@ -1,6 +1,5 @@
 <div class="min-h-screen bg-white">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
         <div class="flex items-center justify-between py-8">
             <div>
                 <h1 class="text-3xl font-bold text-gray-900">Products</h1>
@@ -34,11 +33,10 @@
                 </div>
             </div>
         @else
-            <!-- Products Grid -->
             <x-card-wrapper>
                 @foreach($products as $product)
                     <x-card>
-                        <div class="relative overflow-hidden bg-gray-100 h-48">
+                        <div class="relative overflow-hidden bg-gray-100 h-48 cursor-pointer group" wire:click="show({{ $product->id }})">
                             <img src="{{ asset('storage/' . $product->image_url) }}" alt="{{ $product->name }}"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                         </div>
@@ -67,7 +65,6 @@
                 @endforeach
             </x-card-wrapper>
 
-            <!-- Pagination -->
             <div class="mt-12">
                 {{ $products->links() }}
             </div>
@@ -75,7 +72,16 @@
     </div>
 
     @if ($showModal)
-        <x-modal :mode="$mode" :name="$name" :imageurl="$image_url" :image="$image" wire:key="product-modal"></x-modal>
+        <x-modal 
+            :mode="$mode" 
+            :name="$name" 
+            :imageurl="$image_url" 
+            :image="$image" 
+            :price="$price"
+            :qty="$qty"
+            :description="$description"
+            wire:key="product-modal">
+        </x-modal>
     @endif
 
     <x-confirm-delete />

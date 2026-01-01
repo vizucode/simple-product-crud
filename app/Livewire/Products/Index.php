@@ -4,29 +4,36 @@ namespace App\Livewire\Products;
 
 use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
+#[Title('Product Management')]
 class Index extends Component
 {
-
     use WithFileUploads;
     use WithPagination;
 
     public bool $showModal = false;
+
     public string $mode = 'create';
+
     public ?int $productId = null;
 
     public string $name = '';
+
     public ?float $price = null;
+
     public ?int $qty = null;
+
     public string $description = '';
+
     public $image;
+
     public ?string $image_url = '';
 
-
-    protected function rules() 
+    protected function rules()
     {
         return [
             'name' => 'required|string|max:255',
@@ -35,6 +42,27 @@ class Index extends Component
             'description' => 'nullable|string',
             'image' => $this->mode === 'create' ? 'required|image|max:2048' : 'nullable|image|max:2048',
         ];
+    }
+
+    public function show(int $id)
+    {
+        try {
+            $product = Product::findOrFail($id);
+
+            $this->productId = $product->id;
+            $this->name = $product->name;
+            $this->price = $product->price;
+            $this->qty = $product->qty;
+            $this->description = $product->description;
+            $this->image_url = $product->image_url;
+
+            $this->mode = 'view';
+            $this->showModal = true;
+        } catch (\Exception $e) {
+            $this->dispatch('sweet-toast', icon: 'error', message: 'An error occurred while fetching the product details.');
+
+            return;
+        }
     }
 
     public function create()
@@ -59,7 +87,8 @@ class Index extends Component
         $this->showModal = true;
     }
 
-    public function delete(int $id) {
+    public function delete(int $id)
+    {
         try {
             $product = Product::findOrFail($id);
 
@@ -67,8 +96,9 @@ class Index extends Component
                 Storage::disk('public')->delete($product->image_url);
             }
             $product->delete();
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $this->dispatch('sweet-toast', icon: 'error', message: 'An error occurred while deleting the product.');
+
             return;
         }
     }
@@ -102,6 +132,8 @@ class Index extends Component
                     'description' => $this->description,
                     'image_url' => $path ?? null,
                 ]);
+
+                $this->dispatch('sweet-toast', icon: 'success', message: 'Product created successfully.');
             } else {
                 $product = Product::findOrFail($this->productId);
 
@@ -116,11 +148,11 @@ class Index extends Component
                     'description' => $this->description,
                     'image_url' => $path ?? $this->image_url,
                 ]);
+
+                $this->dispatch('sweet-toast', icon: 'success', message: 'Product updated successfully.');
             }
 
             $this->close();
-            $this->dispatch('sweet-toast', icon: 'success', message: 'Product saved successfully.');
-
         } catch (\Exception $e) {
             $this->dispatch('sweet-toast', icon: 'error', message: 'An error occurred while saving the product.');
         }
