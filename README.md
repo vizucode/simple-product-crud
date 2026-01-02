@@ -8,7 +8,7 @@ The application is built to demonstrate clean code structure, proper validation,
 ---
 
 ## 🚀 Live Demo
-🔗 **Live URL:** https://your-deployed-app-url.com  
+🔗 **Live URL:** https://example.vizucode.my.id
 
 ## 📁 Repository
 🔗 **GitHub/GitLab:** https://github.com/vizucode/simple-product-crud
